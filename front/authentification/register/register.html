@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incription</title>
+</head>
+<body>
+    
+    <main>
+        
+
+        <div class="container mx-auto w-full max-w-xs">
+            <div class="bg-gray-200 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                <p class="text-center text-gray-700 text-sm font-bold mb-2">Inscription</p>
+              <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="Email">
+                 Email
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="Email" type="email" placeholder="Geekerman.jacky@gmail.com">
+              </div>
+              <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="Pseudo">
+                  Pseudo
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="Pseudo" type="text" placeholder="weshWesh">
+              </div>
+              <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="Image">
+                  Image
+                </label>
+                <input class="bg-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="Image" type="file" >
+              </div>
+              <div  class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="Confidentialité">
+                  Confidentialité du compte
+                </label>
+                <select id="confidentialité" class="bg-white shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline">
+                </select>
+              </div>
+              <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                  Mots de passe
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
+              </div>
+              <div class="flex items-center justify-center">
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onclick="register()">
+                  Inscription
+                </button>
+              </div>
+            </div>
+          </div>
+  
+  
+    </main>
+</body>
+<script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/27b15f5b77.js" crossorigin="anonymous"></script>
+    <script src="register.js"></script>
+</html>
