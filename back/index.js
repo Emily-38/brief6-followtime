@@ -3,11 +3,14 @@ const app = express()
 const cors = require('cors')
 const { connect } = require('./connexion/mongodb')
 const routerUser = require('./routes/routeUser')
+const routerPublication = require('./routes/routePublication')
+const routerCommentaire = require('./routes/routeCommentaire')
 
 
 require('dotenv').config()
 
 app.use(express.json())
+app.use(express.static('public'))
 app.use(cors())
 
 connect(process.env.MONGO_URL, (error) => {
@@ -22,6 +25,8 @@ connect(process.env.MONGO_URL, (error) => {
 const PORT = 3555;
 
 app.use("/", routerUser);
+app.use('/', routerPublication)
+app.use('/', routerCommentaire)
 
 
 app.listen(PORT, () => {

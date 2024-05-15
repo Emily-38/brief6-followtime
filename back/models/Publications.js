@@ -1,6 +1,5 @@
 class Publications {
     constructor(
-        title,
         description,
         image,
         user_id,
@@ -8,13 +7,11 @@ class Publications {
         createdAt,
         
     ) {
-        this.title = title
         this.description = description
         this.image = image
         this.user_id = user_id
         this.likes=[likes]
         this.createdAt = createdAt
-        
     }
 }
 module.exports = { Publications }

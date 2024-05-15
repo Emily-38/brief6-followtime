@@ -14,7 +14,7 @@ response.forEach(status => {
 selectConfidentialité()
 
 async function register(){
-   
+   try{
      const email= document.querySelector('#Email').value
     const password= document.querySelector('#password').value
     const pseudo= document.querySelector('#Pseudo').value
@@ -56,8 +56,12 @@ async function register(){
 console.log(apiRequest.status)
 
         if(apiRequest.status === 200){
-     window.location.href = "../login/login.html" }
+            console.log('dans le status 200')
+     window.location.href = "../login/login.html"
+     }
    }    
- 
+ }catch(error){
+    console.log(error)
+ }
 
 }

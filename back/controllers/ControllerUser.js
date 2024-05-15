@@ -9,14 +9,15 @@ require('dotenv').config()
 
 const express = require('express')
 const path = require('path')
-const multer = require('multer')
+const multer = require('multer');
+const { extractToken } = require('../utils/token');
 const app = express()
 const uploadDirectory = path.join(__dirname, '../public/uploads')
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
 //insertion d'image dans la base de donnée avec multer
-const insertArticlePicture = async (req, res) => {
+const insertAvatarPicture = async (req, res) => {
   let newFileName
   let storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -135,6 +136,7 @@ if (!isValidPassword) {
         {
             id: rows[0].id,
             email: rows[0].email,
+            image:rows[0].image,
             pseudo:rows[0].pseudo,
             role: rows[0].role,
             confidentialité:rows[0].confidentialité
@@ -158,7 +160,59 @@ try{
   console.log(err.stack);
 }
 }
+const userbyAuthData= async (req, res) =>{
+  const token = await extractToken(req) ;
+    
+      jwt.verify(
+        token,
+      process.env.SECRET_KEY,
+      async (err, authData) => {
+          if (err) {
+  
+            console.log(err)
+            res.status(401).json({ err: 'Unauthorized' })
+            return
+        } else {
+  
+  try{
+    const id = [authData.id];
 
-  module.exports={ctrlCreateUser, insertArticlePicture, login, Confidentialiter}
+    const sql = "SELECT * , CONCAT('/uploads/', image) as avatar, CONCAT('/uploads/', banniere) as bannier FROM users WHERE id=?";
+    const [result] = await pool.execute(sql, id);
+      res.json(result);
+  } catch (err) {
+    console.log(err.stack);
+  }
+}
+      })
+  }
+  const allUsers= async (req, res) =>{
+    const token = await extractToken(req) ;
+      
+        jwt.verify(
+          token,
+        process.env.SECRET_KEY,
+        async (err, authData) => {
+            if (err) {
+    
+              console.log(err)
+              res.status(401).json({ err: 'Unauthorized' })
+              return
+          } else {
+    
+    try{
+      
+  
+      const sql = "SELECT * , CONCAT('/uploads/', image) as avatar, CONCAT('/uploads/', banniere) as bannier FROM users ";
+      const [result] = await pool.execute(sql);
+        res.json(result);
+    } catch (err) {
+      console.log(err.stack);
+    }
+  }
+        })
+    }
+
+  module.exports={ctrlCreateUser, insertAvatarPicture, login, Confidentialiter,userbyAuthData,allUsers}
 
 

@@ -8,7 +8,6 @@ const middlalpha = (req, res, next) => {
       return res.status(400).json({ msg: "mettre des lettres" });
     }
     req.pseudo = pseudo;
-
     next();
   };
 

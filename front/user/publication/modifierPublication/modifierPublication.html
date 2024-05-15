@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crée une Publication</title>
+</head>
+<body>
+    <main>
+        <div class="container mx-auto w-full max-w-xs">
+            <div class="bg-gray-200 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                <p class="text-center text-gray-700 text-sm font-bold mb-2">Modifier la publication</p>
+             
+              <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
+                  Description
+                </label>
+                <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="description"  placeholder="ecrit la description de ta publication "></textarea>
+              </div>
+              
+              <div class="flex items-center justify-center">
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"  onclick="ModifierPublication()" type="button">
+                  Modifier une publication
+                </button>
+              </div>
+            </div>
+          </div>
+  
+  
+    </main>
+    
+</body>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/27b15f5b77.js" crossorigin="anonymous"></script>
+    <script src="modifierPublication.js"></script>
+</html>
