@@ -242,4 +242,83 @@ async function updatePublication(req, response){
     }
     )
   }
-      module.exports={insertPublicationPicture, CreatePublication, AllPublication,AllPublicationById, deletePublication, updatePublication}
+
+ 
+      // add participant
+  async function addLike(req, res){
+    const token = await extractToken(req) ;
+
+        jwt.verify(
+         token,
+         process.env.SECRET_KEY,
+          async (err, authData) => {
+          if (err) {
+
+           console.log(err)
+          res.status(401).json({ err: 'Unauthorized' })
+          return
+  } else {
+
+    const id = new ObjectId(req.params.id) ;
+ 
+    try{ 
+      await client
+      .db("followtime")
+      .collection("Publication")
+      .updateOne({_id: id},
+        {
+          $addToSet:{
+            likes:authData.id
+          }
+}
+);
+res.status(200).json({ msg: "ajout reussie" });
+      }catch(e){
+        console.log (e)
+        res.status(500).json(e)
+       }
+      }
+    }
+    )
+    }
+
+    async function dislike(req, res){
+        const token = await extractToken(req) ;
+    
+      jwt.verify(
+        token,
+      process.env.SECRET_KEY,
+      async (err, authData) => {
+          if (err) {
+    
+            console.log(err)
+            res.status(401).json({ err: 'Unauthorized' })
+            return
+        } else {
+    
+    
+          if (!req.params.id) {
+            res.status(400).send("Id Obligatoire");
+          }
+        
+          let id = new ObjectId(req.params.id);
+        try{
+           await client
+            .db("followtime")
+            .collection("Publication")
+            .updateOne({ _id: id },
+            {
+              $pull:{likes:authData.id}
+            }
+          );
+            res.status(200).json({ msg: "Suppression like réussie" });
+          } catch {
+            res.status(204).json({ msg: "Pas d'annonce pour cette article" });
+          }
+        }
+      }
+      )
+    }
+    
+
+      module.exports={insertPublicationPicture, CreatePublication, AllPublication,AllPublicationById, deletePublication, updatePublication,addLike,dislike}

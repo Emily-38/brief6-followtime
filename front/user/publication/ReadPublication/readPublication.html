@@ -6,12 +6,26 @@
     <title>Publication</title>
 </head>
 <body>
-<main>
-    <div class="publication">
+<main class="relative">
+    <div class="publication ">
 
     </div>
     <div class="commentaire">
 
+    </div>
+
+    <div id="modifierCommentaire" class="hidden w-full fixed  bottom-0 gap-8 text-sm leading-6 text-gray-900 xl:mx-0 xl:max-w-none">
+        <div class=" flex flex-col rounded-2xl bg-slate-200 shadow-lg ring-1 ring-gray-900/5 sm:col-span-2 xl:col-start-2 xl:row-end-1 ">
+            <textarea id="description" class="m-3"></textarea>
+             <button onclick="commentaireUpdate()" class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Modifier</button>
+        </div>
+    </div>
+
+    <div id="addCommentaire"class="addCommentaire hidden w-full fixed  bottom-0 gap-8 text-sm leading-6 text-gray-900 xl:mx-0 xl:max-w-none">
+        <div class=" flex flex-col rounded-2xl bg-slate-200 shadow-lg ring-1 ring-gray-900/5 sm:col-span-2 xl:col-start-2 xl:row-end-1 ">
+            <textarea id="descriptionCommentaire" class="m-3"></textarea>
+             <button onclick="addCommentaire()" class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Envoyer</button>
+        </div>
     </div>
 </main>
     

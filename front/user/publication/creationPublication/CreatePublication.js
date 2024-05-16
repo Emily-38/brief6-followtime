@@ -40,7 +40,7 @@ const apiRequest = await fetch('http://localhost:3555/CreatePublication', reques
 console.log(publication)
        if(apiRequest.status === 200){
          
-    window.location.href = "../home/home.html"
+    window.location.href = "../../home/home.html"
     }
   }    
 }catch(error){

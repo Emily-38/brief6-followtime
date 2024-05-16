@@ -213,6 +213,8 @@ const userbyAuthData= async (req, res) =>{
         })
     }
 
+  
+
   module.exports={ctrlCreateUser, insertAvatarPicture, login, Confidentialiter,userbyAuthData,allUsers}
 
 

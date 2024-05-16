@@ -1,5 +1,5 @@
 const express = require("express");
-const { CreatePublication, AllPublication, deletePublication, updatePublication, insertPublicationPicture, AllPublicationById } = require("../controllers/ControllerPublication");
+const { CreatePublication, AllPublication, deletePublication, updatePublication, insertPublicationPicture, AllPublicationById, addLike, dislike } = require("../controllers/ControllerPublication");
 
 
 const router = express.Router();
@@ -10,6 +10,8 @@ router.delete('/publicationDelete/:id', deletePublication)
 router.get('/publications', AllPublication)
 router.patch('/publicationUpdate/:id', updatePublication)
 router.get('/publicationById/:id', AllPublicationById)
+router.put('/like/:id', addLike)
+router.patch('/dislike/:id', dislike)
 
 
 module.exports=router
