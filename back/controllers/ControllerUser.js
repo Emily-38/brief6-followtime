@@ -186,7 +186,7 @@ const userbyAuthData= async (req, res) =>{
 }
       })
   }
-  const allUsers= async (req, res) =>{
+const allUsers= async (req, res) =>{
     const token = await extractToken(req) ;
       
         jwt.verify(
@@ -203,7 +203,7 @@ const userbyAuthData= async (req, res) =>{
     try{
       
   
-      const sql = "SELECT * , CONCAT('/uploads/', image) as avatar, CONCAT('/uploads/', banniere) as bannier FROM users ";
+      const sql = "SELECT * , CONCAT('/uploads/', image) as avatar, CONCAT('/uploads/', banniere) as banniere FROM users ";
       const [result] = await pool.execute(sql);
         res.json(result);
     } catch (err) {
@@ -211,10 +211,150 @@ const userbyAuthData= async (req, res) =>{
     }
   }
         })
-    }
+  }
 
+  const addfollowing= async (req, res)=>{
+    const userFollow=req.params.id
+    const token = await extractToken(req) ;
+    
+      jwt.verify(
+        token,
+      process.env.SECRET_KEY,
+      async (err, authData) => {
+          if (err) {
   
+            console.log(err)
+            res.status(401).json({ err: 'Unauthorized' })
+            return
+        } else {
+          try{
+          const user_id= authData.id
+          const data=[user_id,userFollow ]
+          const sql = `INSERT INTO followers (source_id,cible_id)
+                    VALUES (?,?)`;
+          
+     const[rows]=await pool.execute(sql, data);
+      
+      res.json(rows);
+    }
+     catch (err) {
+      console.log(err.stack);
+    }
+  }
+  })
+}
+const unfollowing= async (req, res)=>{
+  const userFollow=req.params.id
+  const token = await extractToken(req) ;
+  
+    jwt.verify(
+      token,
+    process.env.SECRET_KEY,
+    async (err, authData) => {
+        if (err) {
 
-  module.exports={ctrlCreateUser, insertAvatarPicture, login, Confidentialiter,userbyAuthData,allUsers}
+          console.log(err)
+          res.status(401).json({ err: 'Unauthorized' })
+          return
+      } else {
+        try{
+        const user_id= authData.id
+        const data=[user_id,userFollow ]
+        const sql = `DELETE FROM followers WHERE source_id=? AND cible_id= ?`;
+        
+   const[rows]=await pool.execute(sql, data);
+    
+    res.json(rows);
+  }
+   catch (err) {
+    console.log(err.stack);
+  }
+}
+})
+}
+
+const allUserPlusNomberFollower= async (req, res)=>{
+  const token = await extractToken(req) ;
+      
+  jwt.verify(
+    token,
+  process.env.SECRET_KEY,
+  async (err, authData) => {
+      if (err) {
+
+        console.log(err)
+        res.status(401).json({ err: 'Unauthorized' })
+        return
+    } else {
+
+try{
+const values=[req.params.id]
+
+const sql = "SELECT COUNT(users.id) AS nbFollower, users.id AS Profile FROM users JOIN followers ON users.id=followers.cible_id WHERE users.id= ?";
+const [result] = await pool.execute(sql, values);
+  res.json(result);
+} catch (err) {
+console.log(err.stack);
+}
+}
+  })
+
+
+}
+const allFollow= async (req, res) =>{
+  const token = await extractToken(req) ;
+    
+      jwt.verify(
+        token,
+      process.env.SECRET_KEY,
+      async (err, authData) => {
+          if (err) {
+  
+            console.log(err)
+            res.status(401).json({ err: 'Unauthorized' })
+            return
+        } else {
+  
+  try{
+    
+
+    const sql = "SELECT *  FROM followers ";
+    const [result] = await pool.execute(sql);
+      res.json(result);
+  } catch (err) {
+    console.log(err.stack);
+  }
+}
+      })
+}
+
+const allFollowByAuthData= async (req, res) =>{
+  const token = await extractToken(req) ;
+  const id =req.params.id
+    
+      jwt.verify(
+        token,
+      process.env.SECRET_KEY,
+      async (err, authData) => {
+          if (err) {
+  
+            console.log(err)
+            res.status(401).json({ err: 'Unauthorized' })
+            return
+        } else {
+  
+  try{
+    
+const values=[authData.id, id]
+    const sql = "SELECT *  FROM followers WHERE source_id=? AND cible_id=? ";
+    const [result] = await pool.execute(sql,values);
+      res.json(result);
+  } catch (err) {
+    console.log(err.stack);
+  }
+}
+      })
+}
+  module.exports={ctrlCreateUser, insertAvatarPicture, login, Confidentialiter,userbyAuthData,allUsers,addfollowing, allUserPlusNomberFollower, unfollowing,allFollow,allFollowByAuthData }
 
 

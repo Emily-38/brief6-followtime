@@ -31,7 +31,7 @@ users.forEach(user => {
     
     <figcaption class="flex flex-wrap items-center gap-x-4 gap-y-4 border-t border-gray-900/10 px-6 py-4 sm:flex-nowrap">
    <button onclick="Profile('${user.id}')">
-    <img class="h-10 w-10 flex-none rounded-full bg-gray-50" src="http://localhost:3555/uploads/${user.image}" alt="">
+    <img class="h-10 w-10 flex-none object-cover rounded-full bg-gray-50" src="http://localhost:3555/${user.avatar}" alt="">
     </button>
     <div class="flex-auto">
     
@@ -142,8 +142,10 @@ let RequestUsers= await fetch(`http://localhost:3555/users`, request)
          <div class="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
 
           <div class="w-12 h-12 bg-gray-300 rounded-full mr-3">
-            <img src="http://localhost:3555/${user.avatar}" alt="User Avatar" class="w-12 h-12 rounded-full">
-          </div>
+          <button onclick="Profile('${user.id}')">
+            <img src="http://localhost:3555/${user.avatar}" alt="User Avatar" class="w-12 object-cover h-12 rounded-full">
+          </button>
+            </div>
          <div class="flex-1">
            <h2 class="text-lg font-semibold">${user.pseudo}</h2>
            <p class="text-gray-600">${commentaire.description}</p>
@@ -165,7 +167,7 @@ let RequestUsers= await fetch(`http://localhost:3555/users`, request)
 <!-- Dropdown menu -->
 <div id="dropdownDotsHorizontal${commentaire._id}" class="z-10 absolute right-4 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
     <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconHorizontalButton">
-      <button onclick="afficherCommentaire('${commentaire._id}')" class="w-full"><li class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+     <button onclick="afficherCommentaire('${commentaire._id}')" class="w-full"><li class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
       Modifier
       
       </li></button>
@@ -224,7 +226,6 @@ async function afficherCommentaire(id){
     localStorage.setItem('commentaire', id)
     
 }
-
 async function commentaireUpdate(){
   try{
     const description = document.querySelector('#description').value
@@ -303,7 +304,7 @@ async function liketoggle(id){
   
   }
   
-  }
+}
   async function disliketoggle(id){
     const interaction=document.querySelector(`.interaction${id}`)
     const jwt= localStorage.getItem('jwt')
@@ -324,11 +325,11 @@ async function liketoggle(id){
       <button onclick="commenter()"><i class="fa-solid fa-comments"></i></button>`
     }
   
-  }
-
-
-  async function Profile(id){
-//redirection
+}
+async function Profile(id){
+    
+    localStorage.setItem('profile', id)
+    window.location.href="../../profile/profile.html"
      
-  }
+ }
   
