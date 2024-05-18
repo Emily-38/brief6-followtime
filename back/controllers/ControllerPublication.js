@@ -107,8 +107,6 @@ const CreatePublication = async (req, response) => {
                }
             ) 
       }
-  
-
 //read publication par id du user courant 
  const AllPublication = async (request, response) => {
         const token = await extractToken(request) ;
@@ -157,6 +155,33 @@ const AllPublicationById = async (req, response) => {
       
       response.status(200).json(publication)
   }
+})
+}
+
+const GetPublicationByUserId= async (request,response)=>{
+  const token = await extractToken(request) ;
+  let id=request.params.id
+  
+  jwt.verify(
+    token,
+  process.env.SECRET_KEY,
+  async (err, authData) => {
+      if (err) {
+
+       console.log(err)
+       response.status(401).json({ err: 'Unauthorized' })
+       return
+   } else {
+
+   let publication = 
+   await client
+   .db('followtime')
+   .collection('Publication')
+   .find({user_id : parseInt(id)})
+    
+   let apiResponse = await publication.toArray()
+   response.status(200).json(apiResponse)
+}
 })
 }
 
@@ -321,4 +346,4 @@ res.status(200).json({ msg: "ajout reussie" });
     }
     
 
-      module.exports={insertPublicationPicture, CreatePublication, AllPublication,AllPublicationById, deletePublication, updatePublication,addLike,dislike}
+      module.exports={insertPublicationPicture, CreatePublication, AllPublication,AllPublicationById, deletePublication, updatePublication,addLike,dislike, GetPublicationByUserId}

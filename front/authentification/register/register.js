@@ -6,6 +6,7 @@ let response = await confidentialiter.json()
 
 
 response.forEach(status => {
+  
     select.innerHTML +=`<option value="${status.id}">${status.status}</option>`
    
 });

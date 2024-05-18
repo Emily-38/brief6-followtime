@@ -96,12 +96,17 @@ if(!email||!pseudo||!image||!hashedPassword||!confidentialité){
     res.json({message: "les champs ne sont pas remplis"})
 }else{
     let data =[email,pseudo,image,hashedPassword,confidentialité,cleanToken];
-        const sql = `INSERT INTO users (email,pseudo,image, password,confidentialité_id,token)
-                    VALUES (?,?,?,?,?,?)`;
-          
+        const sql = `INSERT INTO users (email,pseudo,image,password,confidentialité_id,token)
+                    VALUES (?,?,?,?,?,?)`;      
      const[rows]=await pool.execute(sql, data);
-      
-      res.json(rows);
+
+     const user_id= rows.insertId
+     const values=[user_id,user_id ]
+     const addFollow = `INSERT INTO followers (source_id,cible_id)
+               VALUES (?,?)`;
+      const[result]=await pool.execute(addFollow, values);
+
+      res.json({user:rows, follow:result});
     }}
     } catch (err) {
       console.log(err.stack);
@@ -177,7 +182,7 @@ const userbyAuthData= async (req, res) =>{
   try{
     const id = [authData.id];
 
-    const sql = "SELECT * , CONCAT('/uploads/', image) as avatar, CONCAT('/uploads/', banniere) as bannier FROM users WHERE id=?";
+    const sql = "SELECT * , CONCAT('/uploads/', image) as avatar, CONCAT('/uploads/', banniere) as banniere FROM users WHERE id=?";
     const [result] = await pool.execute(sql, id);
       res.json(result);
   } catch (err) {
@@ -212,6 +217,33 @@ const allUsers= async (req, res) =>{
   }
         })
   }
+
+  const userbyIdUser= async (req, res) =>{
+    const token = await extractToken(req) ;
+    const id= req.params.id
+        jwt.verify(
+          token,
+        process.env.SECRET_KEY,
+        async (err, authData) => {
+            if (err) {
+    
+              console.log(err)
+              res.status(401).json({ err: 'Unauthorized' })
+              return
+          } else {
+    
+    try{
+      const id_user = [id];
+  
+      const sql = "SELECT * , CONCAT('/uploads/', image) as avatar, CONCAT('/uploads/', banniere) as bannier FROM users WHERE id=?";
+      const [result] = await pool.execute(sql, id_user);
+        res.json(result);
+    } catch (err) {
+      console.log(err.stack);
+    }
+  }
+        })
+    }
 
   const addfollowing= async (req, res)=>{
     const userFollow=req.params.id
@@ -355,6 +387,81 @@ const values=[authData.id, id]
 }
       })
 }
-  module.exports={ctrlCreateUser, insertAvatarPicture, login, Confidentialiter,userbyAuthData,allUsers,addfollowing, allUserPlusNomberFollower, unfollowing,allFollow,allFollowByAuthData }
+const followersAsFollow= async (req, res)=>{
+  const token = await extractToken(req) ;
+      jwt.verify(
+        token,
+      process.env.SECRET_KEY,
+      async (err, authData) => {
+          if (err) {
+  
+            console.log(err)
+            res.status(401).json({ err: 'Unauthorized' })
+            return
+        } else {
+  
+  try{
+    
+const values=[authData.id]
+    const sql = "SELECT * FROM followers WHERE source_id=? ";
+    const [result] = await pool.execute(sql,values);
+      res.json(result);
+  } catch (err) {
+    console.log(err.stack);
+  }
+}
+      })
+}
+
+const ctrlSearchByPseudo= async(req, res)=>{
+  let search=req.params.name
+  const token = await extractToken(req) ;
+  jwt.verify(
+    token,
+  process.env.SECRET_KEY,
+  async (err, authData) => {
+      if (err) {
+
+        console.log(err)
+        res.status(401).json({ err: 'Unauthorized' })
+        return
+    } else {
+  try{
+    const sql =`SELECT *, CONCAT('/uploads/', image) as avatar FROM users WHERE pseudo LIKE '%${search}%' `
+    
+    const [rows] = await pool.execute(sql)
+    res.json(rows)
+  }catch(err){
+    console.log(err)
+  }
+}
+})
+}
+const ctrlSearchByemail= async(req, res)=>{
+  let search=req.params.name
+  const token = await extractToken(req) ;
+  jwt.verify(
+    token,
+  process.env.SECRET_KEY,
+  async (err, authData) => {
+      if (err) {
+
+        console.log(err)
+        res.status(401).json({ err: 'Unauthorized' })
+        return
+    } else {
+  try{
+    const sql =`SELECT *, CONCAT('/uploads/', image) as avatar FROM users WHERE email LIKE '%${search}%' `
+    
+    const [rows] = await pool.execute(sql)
+    res.json(rows)
+  }catch(err){
+    console.log(err)
+  }
+}
+})
+}
+
+  module.exports={ctrlCreateUser, insertAvatarPicture, login, Confidentialiter,userbyAuthData,allUsers,addfollowing, allUserPlusNomberFollower, unfollowing,allFollow,allFollowByAuthData, followersAsFollow,userbyIdUser,ctrlSearchByPseudo,ctrlSearchByemail }
 
 

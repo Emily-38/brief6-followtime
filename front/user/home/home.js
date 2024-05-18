@@ -1,5 +1,7 @@
 
 localStorage.removeItem('publication')
+localStorage.removeItem('profile')
+
 
 async function header(){
      const header= document.querySelector('header')
@@ -16,8 +18,22 @@ async function header(){
   
  response.forEach(user => {
     
-    header.innerHTML=`<div>
-    <img class="h-32 w-full object-cover lg:h-48" src="http://localhost:3555/${user.bannier}" alt="">
+    header.innerHTML=`
+    <div class="recherche w-full flex flex-rows justify-center shadow-md bg-gray-100 p-3"> 
+        <p class="mt-2"><i class="fa-solid fa-magnifying-glass"></i></p>
+        <input id="search-input" oninput="getAll()" class="block  px-4 py-2 text-gray-800  rounded-l-2xl  focus:outline-none" type="text" placeholder="Recherche User" autocomplete="off">
+        <select class="bg-white rounded-r-2xl ">
+        <option value="email">Email</option>
+        <option value="pseudo">Pseudo</option>
+    </select>
+      <div id="dropdownDotsHorizontal" class="z-10 hidden absolute right-4/12 top-12 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+    <ul class="user py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconHorizontalButton">
+      lit
+    </ul>
+    </div>
+        </div>
+    <div>
+    <img class="h-32 w-full object-cover lg:h-48" src="http://localhost:3555${user.banniere}" alt="">
   </div>
   <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
     <div class="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
@@ -42,7 +58,8 @@ async function header(){
     </div>
     <div class="mt-6 hidden min-w-0 flex-1 sm:block md:hidden">
       <h1 class="truncate text-2xl font-bold text-black">${user.pseudo}</h1>
-    </div>`
+    </div>
+    `
  });    
  }
  header()
@@ -65,35 +82,43 @@ let request = {
        Authorization: `Bearer ${jwt}`,
    },
 }
-let apiRequest = await fetch('http://localhost:3555/publications', request)
-let response= await apiRequest.json()
+
+let apiFollow = await fetch('http://localhost:3555/followersasFollow', request)
+let responseFollow= await apiFollow.json()
 
 //revoir le authdata
- const authData=response.authData
+for(let follow of responseFollow){
+console.log(follow.cible_id)
+   let apiPublication = await fetch(`http://localhost:3555/getpublicatonbyid/${follow.cible_id}`, request)
+  let responsePublication= await apiPublication.json()
 
-response.publication.forEach(publication => {
+  let apiUser = await fetch(`http://localhost:3555/userbyid/${follow.cible_id}`, request)
+  let responseUser= await apiUser.json()
+ 
+  responsePublication.forEach(publication => {
+    
+    main.innerHTML +=`
 
-  console.log(publication.likes.includes(authData.id))
-if(authData.id === publication.user_id){
-main.innerHTML +=`<div class="relative mx-auto mt-16 grid max-w-2xl grid-cols-1 grid-rows-1 gap-8 text-sm leading-6 text-gray-900 sm:mt-20 sm:grid-cols-2 xl:mx-0 xl:max-w-none xl:grid-flow-col xl:grid-cols-4">
-<figure class="rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5 sm:col-span-2 xl:col-start-2 xl:row-end-1">
+    
+
+<div class="relative mx-auto mt-16 grid grid-cols-1 max-w-2xl  grid-rows-1 gap-8 text-sm leading-6 text-gray-900 sm:mt-20 sm:grid-cols-2 xl:mx-0 xl:max-w-none xl:grid-flow-col xl:grid-cols-4">
+<figure class="rounded-2xl  bg-white shadow-lg ring-1 ring-gray-900/5 sm:col-span-2 xl:col-start-2 xl:row-start-1">
   <figcaption class="flex flex-wrap items-center gap-x-4 gap-y-4 border-t border-gray-900/10 px-6 py-4 sm:flex-nowrap">
-    <img class="h-10 w-10 flex-none rounded-full bg-gray-50" src="http://localhost:3555/uploads/${authData.image}" alt="">
+    <img class="h-10 w-10 flex-none object-cover rounded-full bg-gray-50" src="http://localhost:3555${responseUser[0].avatar}" alt="">
     <div class="flex-auto">
     
-      <div class="font-semibold">${authData.pseudo}</div>
+      <div class="font-semibold">${responseUser[0].pseudo}</div>
     </div>
 
-    ${authData.id === publication.user_id ?` 
     <div class="relative">
-    <button onclick="icons('${response._id}')" class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600" type="button"> 
+    <button onclick="icons('${publication._id}')" class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600" type="button"> 
   <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 3">
     <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"/>
   </svg>
 </button>
 
 <!-- Dropdown menu -->
-<div id="dropdownDotsHorizontal${response._id}" class="z-10 absolute right-1 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+<div id="dropdownDotsHorizontal${publication._id}" class="z-10 absolute right-1 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
     <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconHorizontalButton">
     <button onclick="modifier('${publication._id}')" class="w-full"><li class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Modifier</button>
       
@@ -106,7 +131,7 @@ main.innerHTML +=`<div class="relative mx-auto mt-16 grid max-w-2xl grid-cols-1 
     </ul>
    
 </div>
-    </div> `:""}
+    </div> 
     
   </figcaption>
   <img class="w-full"src="http://localhost:3555/uploads/${publication.image}">
@@ -116,7 +141,7 @@ main.innerHTML +=`<div class="relative mx-auto mt-16 grid max-w-2xl grid-cols-1 
   </div>
   </button>
 
-  ${publication.likes.includes(authData.id)=== true ? `<div class="flex justify-between ">
+  ${publication.likes.includes(responseUser[0].id)=== true ? `<div class="flex justify-between ">
   <div class="interaction${publication._id} m-2 ">
   <button onclick="disliketoggle('${publication._id}')"  class=" m-2"><i id="like" class="fa-solid fa-heart text-red-600 "></i></button>
         <button onclick="commenter()"><i class="fa-solid fa-comments"></i></button>
@@ -126,10 +151,6 @@ main.innerHTML +=`<div class="relative mx-auto mt-16 grid max-w-2xl grid-cols-1 
       <button onclick="liketoggle('${publication._id}')"  class="add m-2"><i id="like" class="fa-solid fa-heart  "></i></button>
       <button onclick="commenter()"><i class="fa-solid fa-comments"></i></button>
   </div>` }
-
-  
-   
-    
   </div>
   <div id="commentaire"class="commentaire hidden max-w-2xl left-1/4 bottom-0 gap-8 text-sm leading-6 text-gray-900 xl:mx-0 xl:max-w-none">
         <div class=" flex flex-col rounded-2xl bg-slate-200 shadow-lg ring-1 ring-gray-900/5 sm:col-span-2 xl:col-start-2 xl:row-end-1 ">
@@ -140,11 +161,87 @@ main.innerHTML +=`<div class="relative mx-auto mt-16 grid max-w-2xl grid-cols-1 
 </figure>
 </div> 
 `
-}
 })
+}
 }
 publication()
 
+async function getAll(){
+  const jwt = localStorage.getItem('jwt')
+  const select=document.querySelector('select').value
+  const searchInput = document.querySelector('#search-input').value;
+  const users=document.querySelector('.user')
+const dropdow=document.querySelector('#dropdownDotsHorizontal')
+console.log(select )
+if( !searchInput){
+    dropdow.classList.add("hidden")
+  }
+  else if (select == 'email' && searchInput.length >0 ) {
+ 
+    let request = {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          Authorization: `Bearer ${jwt}`,
+      },
+    }  
+    
+      let apiUser = await fetch(`http://localhost:3555/searchUserByEmail/${searchInput}`, request)
+      let responseUser= await apiUser.json()
+       
+    if(apiUser.status === 200 ){
+        
+    dropdow.classList.remove('hidden')
+        users.innerHTML=""
+    
+     responseUser.forEach(user =>{
+      users.innerHTML+=`<li><button onclick="redirectionProfile('${user.id}')">
+      <div class="flex flex-row items-center">
+      <img src="http://localhost:3555${user.avatar}" class="w-12 object-cover h-12 rounded-full"> <p class="m-2">${user.pseudo}</p>
+      </div
+      </button>
+      </li>
+      `
+     })
+    } 
+      }
+
+else if (select == 'pseudo' && searchInput.length >0 ) {
+ 
+let request = {
+  method: 'GET',
+  headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      Authorization: `Bearer ${jwt}`,
+  },
+}  
+
+  let apiUser = await fetch(`http://localhost:3555/searchUser/${searchInput}`, request)
+  let responseUser= await apiUser.json()
+   
+if(apiUser.status === 200 ){
+    
+dropdow.classList.remove('hidden')
+    users.innerHTML=""
+
+ responseUser.forEach(user =>{
+  users.innerHTML+=`<li><button onclick="redirectionProfile('${user.id}')">
+  <div class="flex flex-row items-center">
+  <img src="http://localhost:3555${user.avatar}" class="w-12 object-cover h-12 rounded-full"> <p class="m-2">${user.pseudo}</p>
+  </div>
+  </button>
+  </li>
+  `
+ })
+} 
+
+  }
+}
+
+async function redirectionProfile(id){
+  localStorage.setItem('profile', id)
+  window.location.href="../profile/profile.html"
+}
 async function modifier(id){
     localStorage.setItem('publication',id)
 window.location.href="../publication/modifierPublication/modifierPublication.html"
