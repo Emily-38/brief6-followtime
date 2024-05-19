@@ -1,6 +1,6 @@
 const express = require("express");
 const middlEmail = require("../utils/middlewares/user/middlemail");
-const { ctrlCreateUser, insertAvatarPicture, login, Confidentialiter, userbyAuthData, allUsers, addfollowing, allUserPlusNomberFollower, unfollowing, allFollow, allFollowByAuthData, followersAsFollow, userbyIdUser, ctrlSearchByPseudo, ctrlSearchByemail } = require("../controllers/ControllerUser");
+const { ctrlCreateUser, insertAvatarPicture, login, Confidentialiter, userbyAuthData, allUsers, addfollowing, allUserPlusNomberFollower, unfollowing, allFollow, allFollowByAuthData, followersAsFollow, userbyIdUser, ctrlSearchByPseudo, ctrlSearchByemail, updateCompteDesactive, updateCompteActive, updatePassword } = require("../controllers/ControllerUser");
 const middlalpha = require("../utils/middlewares/user/middlalpha");
 const router = express.Router();
 
@@ -20,5 +20,8 @@ router.delete('/unfollow/:id', unfollowing)
 router.get('/allFollow',allFollow)
 router.get('/followByAuth/:id',allFollowByAuthData)
 router.get('/followersasFollow',followersAsFollow)
+router.patch('/desactiveCompte/:id', updateCompteDesactive)
+router.patch('/activeCompte/:id', updateCompteActive)
+router.patch('/updatePassword/:token', updatePassword)
 
 module.exports=router

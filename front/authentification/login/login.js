@@ -26,7 +26,7 @@ async function login() {
             window.localStorage.setItem('jwt', jwt)
              
             if (role === 'admin') {
-                window.location.href = '../admin/admin.html'
+                window.location.href = '../../admin/admin.html'
             } else {
                 window.location.href ="../../user/home/home.html"
             }

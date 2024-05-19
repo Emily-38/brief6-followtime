@@ -208,7 +208,7 @@ const allUsers= async (req, res) =>{
     try{
       
   
-      const sql = "SELECT * , CONCAT('/uploads/', image) as avatar, CONCAT('/uploads/', banniere) as banniere FROM users ";
+      const sql = "SELECT * ,users.id as userid, CONCAT('/uploads/', image) as avatar, CONCAT('/uploads/', banniere) as banniere, COUNT(users.id) as follower FROM users JOIN followers ON users.id=followers.cible_id GROUP BY followers.cible_id";
       const [result] = await pool.execute(sql);
         res.json(result);
     } catch (err) {
@@ -461,7 +461,83 @@ const ctrlSearchByemail= async(req, res)=>{
 }
 })
 }
+const updateCompteDesactive=async (req,res)=>{
+const userId=req.params.id
+const token = await extractToken(req) ;
+  jwt.verify(
+    token,
+  process.env.SECRET_KEY,
+  async (err, authData) => {
+      if (err) {
 
-  module.exports={ctrlCreateUser, insertAvatarPicture, login, Confidentialiter,userbyAuthData,allUsers,addfollowing, allUserPlusNomberFollower, unfollowing,allFollow,allFollowByAuthData, followersAsFollow,userbyIdUser,ctrlSearchByPseudo,ctrlSearchByemail }
+        console.log(err)
+        res.status(401).json({ err: 'Unauthorized' })
+        return
+    } else {
+      try{
+        const data=[userId]
+        const sql =`UPDATE users SET isActive = '0' WHERE users.id = ?;  `
+        
+        const [rows] = await pool.execute(sql,data)
+        res.json(rows)
+      }catch(err){
+        console.log(err)
+      }
+    }
+    })
+}
+const updateCompteActive=async (req,res)=>{
+  const userId=req.params.id
+  const token = await extractToken(req) ;
+    jwt.verify(
+      token,
+    process.env.SECRET_KEY,
+    async (err, authData) => {
+        if (err) {
+  
+          console.log(err)
+          res.status(401).json({ err: 'Unauthorized' })
+          return
+      } else {
+        try{
+          const data=[userId]
+          const sql =`UPDATE users SET isActive = '1' WHERE users.id = ?;  `
+          
+          const [rows] = await pool.execute(sql,data)
+          res.json(rows)
+        }catch(err){
+          console.log(err)
+        }
+      }
+      })
+  }
+const updatePassword = async (req,res)=>{
+  const tokenmailer=req.params.token
+  const hashedPassword = await bcrypt.hash(req.body.password, 10)
+
+  const token = await extractToken(req) ;
+    jwt.verify(
+      token,
+    process.env.SECRET_KEY,
+    async (err, authData) => {
+        if (err) {
+          console.log(err)
+          res.status(401).json({ err: 'Unauthorized' })
+          return
+      } else {
+        try{
+          const data=[hashedPassword,tokenmailer]
+          const sql =`UPDATE users SET password = ? WHERE token= ?;  `
+          
+          const [rows] = await pool.execute(sql,data)
+          res.json(rows)
+        }catch(err){
+          console.log(err)
+        }
+      }
+      })
+
+  }
+  module.exports={ctrlCreateUser, insertAvatarPicture, login, Confidentialiter,userbyAuthData,allUsers,addfollowing, allUserPlusNomberFollower, unfollowing,allFollow,allFollowByAuthData, followersAsFollow,userbyIdUser,ctrlSearchByPseudo,ctrlSearchByemail, updateCompteDesactive,updateCompteActive,updatePassword }
 
 

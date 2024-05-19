@@ -19,12 +19,14 @@ async function header(){
  response.forEach(user => {
     
     header.innerHTML=`
+    <!--SearchBar-->
     <div class="recherche w-full flex flex-rows justify-center shadow-md bg-gray-100 p-3"> 
         <p class="mt-2"><i class="fa-solid fa-magnifying-glass"></i></p>
         <input id="search-input" oninput="getAll()" class="block  px-4 py-2 text-gray-800  rounded-l-2xl  focus:outline-none" type="text" placeholder="Recherche User" autocomplete="off">
         <select class="bg-white rounded-r-2xl ">
-        <option value="email">Email</option>
         <option value="pseudo">Pseudo</option>
+        <option value="email">Email</option>
+        
     </select>
       <div id="dropdownDotsHorizontal" class="z-10 hidden absolute right-4/12 top-12 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
     <ul class="user py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconHorizontalButton">
@@ -33,6 +35,8 @@ async function header(){
     </div>
         </div>
     <div>
+
+    <!--profile user-->
     <img class="h-32 w-full object-cover lg:h-48" src="http://localhost:3555${user.banniere}" alt="">
   </div>
   <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
@@ -53,12 +57,14 @@ async function header(){
           <i class="fa-solid fa-plus"></i>
             <p class='ml-2'>Crée une publication<p>
           </button>
+          <button type="button" onclick="logOut()" class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+          <i class="fa-solid fa-right-from-bracket"></i>
+            <p class='ml-2'>Déconnexion<p>
+          </button>
         </div>
       </div>
     </div>
-    <div class="mt-6 hidden min-w-0 flex-1 sm:block md:hidden">
-      <h1 class="truncate text-2xl font-bold text-black">${user.pseudo}</h1>
-    </div>
+    
     `
  });    
  }
@@ -88,7 +94,6 @@ let responseFollow= await apiFollow.json()
 
 //revoir le authdata
 for(let follow of responseFollow){
-console.log(follow.cible_id)
    let apiPublication = await fetch(`http://localhost:3555/getpublicatonbyid/${follow.cible_id}`, request)
   let responsePublication= await apiPublication.json()
 
@@ -358,4 +363,9 @@ async function disliketoggle(id){
     <button onclick="commenter()"><i class="fa-solid fa-comments"></i></button>`
   }
 
+}
+
+async function logOut(){
+  localStorage.clear()
+  window.location.href="../../authentification/login/login.html"
 }
