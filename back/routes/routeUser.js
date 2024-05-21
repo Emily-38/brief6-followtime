@@ -1,6 +1,6 @@
 const express = require("express");
 const middlEmail = require("../utils/middlewares/user/middlemail");
-const { ctrlCreateUser, insertAvatarPicture, login, Confidentialiter, userbyAuthData, allUsers, addfollowing, allUserPlusNomberFollower, unfollowing, allFollow, allFollowByAuthData, followersAsFollow, userbyIdUser, ctrlSearchByPseudo, ctrlSearchByemail, updateCompteDesactive, updateCompteActive, updatePassword } = require("../controllers/ControllerUser");
+const { ctrlCreateUser, insertAvatarPicture, login, Confidentialiter, userbyAuthData, allUsers, addfollowing, allUserPlusNomberFollower, unfollowing, allFollow, allFollowByAuthData, followersAsFollow, userbyIdUser, ctrlSearchByPseudo, ctrlSearchByemail, updateCompteDesactive, updateCompteActive, updatePassword, mailerpassword, updateprofilephoto, updateprofilBanner, updatePseudo, updateConfidentialiter, updateEmail, mailerEmail } = require("../controllers/ControllerUser");
 const middlalpha = require("../utils/middlewares/user/middlalpha");
 const router = express.Router();
 
@@ -20,8 +20,17 @@ router.delete('/unfollow/:id', unfollowing)
 router.get('/allFollow',allFollow)
 router.get('/followByAuth/:id',allFollowByAuthData)
 router.get('/followersasFollow',followersAsFollow)
+
+//les updates
 router.patch('/desactiveCompte/:id', updateCompteDesactive)
 router.patch('/activeCompte/:id', updateCompteActive)
+router.patch('/updateAvatar', updateprofilephoto)
+router.patch('/updateBanniere', updateprofilBanner)
+router.patch('/updateConfidentialiter',updateConfidentialiter)
+router.patch('/updatePseudo',updatePseudo)
+router.patch('/updateEmail/:token',updateEmail)
+router.patch('/use-change-email',mailerEmail)
 router.patch('/updatePassword/:token', updatePassword)
+router.patch('/user-change-password', mailerpassword)
 
 module.exports=router

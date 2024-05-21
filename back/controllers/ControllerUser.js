@@ -11,6 +11,7 @@ const express = require('express')
 const path = require('path')
 const multer = require('multer');
 const { extractToken } = require('../utils/token');
+const { transporter } = require('../connexion/mailer');
 const app = express()
 const uploadDirectory = path.join(__dirname, '../public/uploads')
 app.set('views', path.join(__dirname, 'views'))
@@ -87,17 +88,12 @@ const ctrlCreateUser = async (req, res) => {
     if (resultEmail.length !==0 || resultPseudo.length !== 0) {
       res.status(400).json({ error: "Invalid credentials" });
     }else{
-
-       let activationToken = await bcrypt.hash(email, 10)
-       let cleanToken=activationToken.replace('/','')
-      
-
 if(!email||!pseudo||!image||!hashedPassword||!confidentialité){
     res.json({message: "les champs ne sont pas remplis"})
 }else{
-    let data =[email,pseudo,image,hashedPassword,confidentialité,cleanToken];
-        const sql = `INSERT INTO users (email,pseudo,image,password,confidentialité_id,token)
-                    VALUES (?,?,?,?,?,?)`;      
+    let data =[email,pseudo,image,hashedPassword,confidentialité];
+        const sql = `INSERT INTO users (email,pseudo,image,password,confidentialité_id,)
+                    VALUES (?,?,?,?,?)`;      
      const[rows]=await pool.execute(sql, data);
 
      const user_id= rows.insertId
@@ -405,7 +401,7 @@ const followersAsFollow= async (req, res)=>{
 const values=[authData.id]
     const sql = "SELECT * FROM followers WHERE source_id=? ";
     const [result] = await pool.execute(sql,values);
-      res.json(result);
+      res.json({result: result, authData:authData.id});
   } catch (err) {
     console.log(err.stack);
   }
@@ -413,6 +409,7 @@ const values=[authData.id]
       })
 }
 
+//les recherche par pseudo et mail
 const ctrlSearchByPseudo= async(req, res)=>{
   let search=req.params.name
   const token = await extractToken(req) ;
@@ -461,6 +458,12 @@ const ctrlSearchByemail= async(req, res)=>{
 }
 })
 }
+
+
+
+
+
+// les update user
 const updateCompteDesactive=async (req,res)=>{
 const userId=req.params.id
 const token = await extractToken(req) ;
@@ -510,7 +513,204 @@ const updateCompteActive=async (req,res)=>{
         }
       }
       })
-  }
+}
+const updateprofilephoto=async(req,res)=>{
+  const photo=req.body.image
+  const token = await extractToken(req) ;
+    jwt.verify(
+      token,
+    process.env.SECRET_KEY,
+    async (err, authData) => {
+        if (err) {
+  
+          console.log(err)
+          res.status(401).json({ err: 'Unauthorized' })
+          return
+      } else {
+        try{
+          const data=[photo, authData.id]
+          const sql =`UPDATE users SET image= ? WHERE users.id = ?;  `
+          
+          const [rows] = await pool.execute(sql,data)
+          res.json(rows)
+        }catch(err){
+          console.log(err)
+        }
+      }
+      })
+}
+const updateprofilBanner=async(req,res)=>{
+  const photo=req.body.banniere
+  const token = await extractToken(req) ;
+    jwt.verify(
+      token,
+    process.env.SECRET_KEY,
+    async (err, authData) => {
+        if (err) {
+  
+          console.log(err)
+          res.status(401).json({ err: 'Unauthorized' })
+          return
+      } else {
+        try{
+          const data=[photo, authData.id]
+          const sql =`UPDATE users SET banniere= ? WHERE users.id = ?;  `
+          
+          const [rows] = await pool.execute(sql,data)
+          res.json(rows)
+        }catch(err){
+          console.log(err)
+        }
+      }
+      })
+}
+
+const updatePseudo=async(req,res)=>{
+  const pseudo=req.body.pseudo
+  const token = await extractToken(req) ;
+    jwt.verify(
+      token,
+    process.env.SECRET_KEY,
+    async (err, authData) => {
+        if (err) {
+  
+          console.log(err)
+          res.status(401).json({ err: 'Unauthorized' })
+          return
+      } else {
+        try{
+          const data=[pseudo, authData.id]
+          const sql =`UPDATE users SET pseudo= ? WHERE users.id = ?;  `
+          
+          const [rows] = await pool.execute(sql,data)
+          res.json(rows)
+        }catch(err){
+          console.log(err)
+        }
+      }
+      })
+}
+const updateConfidentialiter=async(req,res)=>{
+  const confidentialiter=req.body.confidentialiter
+  const token = await extractToken(req) ;
+    jwt.verify(
+      token,
+    process.env.SECRET_KEY,
+    async (err, authData) => {
+        if (err) {
+  
+          console.log(err)
+          res.status(401).json({ err: 'Unauthorized' })
+          return
+      } else {
+        try{
+          const data=[confidentialiter,authData.id]
+          const sql =`UPDATE users SET confidentialité_id= ? WHERE users.id = ?;  `
+          
+          const [rows] = await pool.execute(sql,data)
+          res.json(rows)
+        }catch(err){
+          console.log(err)
+        }
+      }
+      })
+}
+
+const mailerpassword =async (req,res)=>{
+
+  const token= await extractToken(req);
+        jwt.verify( 
+            token,
+          process.env.SECRET_KEY,
+          async (err, authData) => {
+              if (err) {
+        
+                console.log(err)
+                res.status(401).json({ err: 'Unauthorized' })
+                return
+            } else {
+
+const email=authData.email
+const tokenTemporaire = jwt.sign(
+  {
+      id: authData.id,
+      email: authData.email,
+  },
+
+      process.env.SECRET_KEY,
+      { expiresIn: '1h'}
+)
+const data=[tokenTemporaire, email]
+const sql =`UPDATE users SET token = ? WHERE email = ?;  `
+
+const [rows]=await pool.execute(sql,data)
+
+if(rows.affectedRows===1){
+const link=`http://127.0.0.1:5500/user/profile/change-password/change-password.html?token=${tokenTemporaire}`
+
+
+  const info = await transporter.sendMail({
+    from: `followtime@support.fr`, 
+    to: 'nayuko1208@gmail.com', //useremail ${authdata.email}
+    subject: `changer votre mot de passe`, 
+    text: `suivre le mail suivant`,
+    html: `<b>Bonjour ${authData.pseudo}</b>
+    <p>voici le lien qui vous permettra de changer votre mot de passe : </p>
+    <a href="${link}" >cliquer ici</a>`, 
+  })
+
+ 
+  res.status(200).json({msg:`Message send with the id ${info.messageId}`})
+}}
+})
+}
+const mailerEmail= async (req,res)=>{
+  const token= await extractToken(req);
+        jwt.verify( 
+            token,
+          process.env.SECRET_KEY,
+          async (err, authData) => {
+              if (err) {
+        
+                console.log(err)
+                res.status(401).json({ err: 'Unauthorized' })
+                return
+            } else {
+
+const email=req.body.email
+const tokenTemporaire = jwt.sign(
+  {
+      id: authData.id,
+      email:email
+  },
+
+      process.env.SECRET_KEY,
+      { expiresIn: '1h'}
+)
+const data=[tokenTemporaire, authData.id]
+const sql =`UPDATE users SET token = ? WHERE id = ?;  `
+
+const [rows]=await pool.execute(sql,data)
+console.log(email)
+const link=`http://127.0.0.1:5500/user/profile/change-email/change-email.html?token=${tokenTemporaire}`
+
+
+  const info = await transporter.sendMail({
+    from: `followtime@support.fr`, 
+    to: 'nayuko1208@gmail.com', //useremail ${email}
+    subject: `changer votre email`, 
+    text: `suivre le mail suivant`,
+    html: `<b>Bonjour ${authData.pseudo}</b>
+    <p>voici le lien qui vous permettra confirmer votre email : </p>
+    <a href="${link}">cliquer ici</a>`, 
+  })
+
+  console.log('Message sent: %s', info.messageId)
+  res.status(200).json({msg:`Message send with the id ${info.messageId}`, user:rows})
+}
+})
+}
+
 const updatePassword = async (req,res)=>{
   const tokenmailer=req.params.token
   const hashedPassword = await bcrypt.hash(req.body.password, 10)
@@ -537,7 +737,33 @@ const updatePassword = async (req,res)=>{
       }
       })
 
-  }
-  module.exports={ctrlCreateUser, insertAvatarPicture, login, Confidentialiter,userbyAuthData,allUsers,addfollowing, allUserPlusNomberFollower, unfollowing,allFollow,allFollowByAuthData, followersAsFollow,userbyIdUser,ctrlSearchByPseudo,ctrlSearchByemail, updateCompteDesactive,updateCompteActive,updatePassword }
+}
+
+const updateEmail = async (req,res)=>{
+  const tokenmailer=req.params.token
+  const token = await extractToken(req) ;
+    jwt.verify(
+      token,
+    process.env.SECRET_KEY,
+    async (err, authData) => {
+        if (err) {
+          console.log(err)
+          res.status(401).json({ err: 'Unauthorized' })
+          return
+      } else {
+        try{
+          const data=[authData.email,tokenmailer]
+          const sql =`UPDATE users SET email = ? WHERE token= ?;  `
+          
+          const [rows] = await pool.execute(sql,data)
+          res.json(rows)
+        }catch(err){
+          console.log(err)
+        }
+      }
+      })
+
+}
+  module.exports={ctrlCreateUser, insertAvatarPicture, login, Confidentialiter,userbyAuthData,allUsers,addfollowing, allUserPlusNomberFollower, unfollowing,allFollow,allFollowByAuthData, followersAsFollow,userbyIdUser,ctrlSearchByPseudo,ctrlSearchByemail, updateCompteDesactive,updateCompteActive,updatePassword,mailerpassword, updateprofilephoto,updateprofilBanner,updatePseudo,updateConfidentialiter,updateEmail,mailerEmail }
 
 

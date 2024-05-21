@@ -21,8 +21,8 @@ async function header(){
     header.innerHTML=`
     <!--SearchBar-->
     <div class="recherche w-full flex flex-rows justify-center shadow-md bg-gray-100 p-3"> 
-        <p class="mt-2"><i class="fa-solid fa-magnifying-glass"></i></p>
-        <input id="search-input" oninput="getAll()" class="block  px-4 py-2 text-gray-800  rounded-l-2xl  focus:outline-none" type="text" placeholder="Recherche User" autocomplete="off">
+        <p class=" rounded-l-2xl bg-white  "><i class="fa-solid fa-magnifying-glass mt-3 ml-2"></i></p>
+        <input id="search-input" oninput="getAll()" class="block  px-4 py-2 text-gray-800    focus:outline-none" type="text" placeholder="Recherche User" autocomplete="off">
         <select class="bg-white rounded-r-2xl ">
         <option value="pseudo">Pseudo</option>
         <option value="email">Email</option>
@@ -92,8 +92,8 @@ let request = {
 let apiFollow = await fetch('http://localhost:3555/followersasFollow', request)
 let responseFollow= await apiFollow.json()
 
-//revoir le authdata
-for(let follow of responseFollow){
+
+for(let follow of responseFollow.result){
    let apiPublication = await fetch(`http://localhost:3555/getpublicatonbyid/${follow.cible_id}`, request)
   let responsePublication= await apiPublication.json()
 
@@ -114,29 +114,29 @@ for(let follow of responseFollow){
     
       <div class="font-semibold">${responseUser[0].pseudo}</div>
     </div>
-
-    <div class="relative">
-    <button onclick="icons('${publication._id}')" class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600" type="button"> 
-  <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 3">
-    <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"/>
-  </svg>
+${responseFollow.authData === publication.user_id?`<div class="relative">
+<button onclick="icons('${publication._id}')" class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600" type="button"> 
+<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 3">
+<path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"/>
+</svg>
 </button>
 
 <!-- Dropdown menu -->
 <div id="dropdownDotsHorizontal${publication._id}" class="z-10 absolute right-1 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconHorizontalButton">
-    <button onclick="modifier('${publication._id}')" class="w-full"><li class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Modifier</button>
-      
-      
-      </li>
-      <button onclick="deletePublication('${publication._id}')" class="w-full"><li class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-       Supprimer </button>
-      </li>
+<ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconHorizontalButton">
+<button onclick="modifier('${publication._id}')" class="w-full"><li class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Modifier</button>
+  
+  
+  </li>
+  <button onclick="deletePublication('${publication._id}')" class="w-full"><li class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+   Supprimer </button>
+  </li>
 
-    </ul>
-   
+</ul>
+
 </div>
-    </div> 
+</div> `:""}
+    
     
   </figcaption>
   <img class="w-full"src="http://localhost:3555/uploads/${publication.image}">
@@ -146,7 +146,7 @@ for(let follow of responseFollow){
   </div>
   </button>
 
-  ${publication.likes.includes(responseUser[0].id)=== true ? `<div class="flex justify-between ">
+  ${publication.likes.includes(responseFollow.authData)=== true ? `<div class="flex justify-between ">
   <div class="interaction${publication._id} m-2 ">
   <button onclick="disliketoggle('${publication._id}')"  class=" m-2"><i id="like" class="fa-solid fa-heart text-red-600 "></i></button>
         <button onclick="commenter()"><i class="fa-solid fa-comments"></i></button>

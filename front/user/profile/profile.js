@@ -26,7 +26,7 @@ const response=await FollowExist.json()
 
 resultUser.forEach(user => {
     
-if(user.id == id){
+if(user.userid == id){
   main.innerHTML+=`
   <div>
     <img class="h-32 w-full object-cover lg:h-48" src="http://localhost:3555/${user.banniere}" alt="">

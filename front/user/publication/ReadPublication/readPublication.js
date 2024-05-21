@@ -23,8 +23,8 @@ const publicationdiv=document.querySelector('.publication')
 
  
 users.forEach(user => {
-  console.log(user)
-        if(user.id===response.user_id){
+console.log(user.userid)
+        if(user.userid===response.user_id){
       publicationdiv.innerHTML +=`
         <div class=" mx-auto mt-16 grid max-w-2xl grid-cols-1 grid-rows-1 gap-8 text-sm leading-6 text-gray-900 sm:mt-20 sm:grid-cols-2 xl:mx-0 xl:max-w-none xl:grid-flow-col xl:grid-cols-4">
             <figure class="rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5 sm:col-span-2 xl:col-start-2 xl:row-end-1">
@@ -132,14 +132,11 @@ let RequestUsers= await fetch(`http://localhost:3555/users`, request)
  
          response.forEach(commentaire => {
             users.forEach(user=>{
-                if (commentaire.user_id===user.id) {
-                    
-                
-          
-         
+                if (commentaire.user_id===user.userid) {
+
          commentairediv.innerHTML+=`
          
-         <div class="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md">
+         <div class=" h-20 flex items-center mb-4 cursor-pointer hover:bg-gray-200 p-2 rounded-md">
 
           <div class="w-12 h-12 bg-gray-300 rounded-full mr-3">
           <button onclick="Profile('${user.id}')">
