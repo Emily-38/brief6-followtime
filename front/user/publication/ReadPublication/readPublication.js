@@ -79,7 +79,7 @@ console.log(user.userid)
                  :`<div class="flex justify-between ">
                 <div class="interaction${response._id} m-2 ">
                     <button onclick="liketoggle('${response._id}')"  class="add m-2"><i id="like" class="fa-solid fa-heart  "></i></button>
-                    <button onclick="commenter()"><i class="fa-solid fa-comments"></i></button>
+                   
                 </div>` }
 
             </figure>
@@ -184,10 +184,6 @@ let RequestUsers= await fetch(`http://localhost:3555/users`, request)
         });
 }
   commentaire()
-async function commenter(){
-    const commentaire= document.querySelector('.addCommentaire')
-    commentaire.classList.toggle('hidden')
-}
 async function addCommentaire(){
   try{
 const description = document.querySelector('#descriptionCommentaire').value

@@ -49,6 +49,11 @@ async function header(){
           <h1 class="truncate text-2xl font-bold text-black">${user.pseudo}</h1>
         </div>
         <div class="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0">
+        ${user.role==="admin"?`<button type="button" onclick='panneauAdmin()' class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+       
+          <p class='ml-2'> Panneau Admin </p>
+        </button>`:''}
+        
           <button type="button" onclick="updateUser()" class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
           <i class="fa-solid fa-pen"></i>
             <p class='ml-2'> Modifier profile </p>
@@ -69,7 +74,9 @@ async function header(){
  });    
  }
  header()
-
+ async function panneauAdmin(){
+window.location.href="../../admin/admin.html"
+ }
 async function updateUser(){
     window.location.href ="../updateProfile/updateProfile.html"
 }
@@ -109,7 +116,9 @@ for(let follow of responseFollow.result){
 <div class="relative mx-auto mt-16 grid grid-cols-1 max-w-2xl  grid-rows-1 gap-8 text-sm leading-6 text-gray-900 sm:mt-20 sm:grid-cols-2 xl:mx-0 xl:max-w-none xl:grid-flow-col xl:grid-cols-4">
 <figure class="rounded-2xl  bg-white shadow-lg ring-1 ring-gray-900/5 sm:col-span-2 xl:col-start-2 xl:row-start-1">
   <figcaption class="flex flex-wrap items-center gap-x-4 gap-y-4 border-t border-gray-900/10 px-6 py-4 sm:flex-nowrap">
+   <button onclick="redirectionProfile('${responseUser[0].id}')">
     <img class="h-10 w-10 flex-none object-cover rounded-full bg-gray-50" src="http://localhost:3555${responseUser[0].avatar}" alt="">
+    </button>
     <div class="flex-auto">
     
       <div class="font-semibold">${responseUser[0].pseudo}</div>

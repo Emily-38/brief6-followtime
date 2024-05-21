@@ -46,6 +46,10 @@ response.forEach(user => {
          <h1 class="truncate text-2xl font-bold text-black">${user.pseudo}</h1>
        </div>
        <div class="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0">
+       <button type="button" onclick="home()" class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+         
+           <p class='ml-2'> Home </p>
+         </button>
          <button type="button" onclick="updateUser()" class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
          <i class="fa-solid fa-pen"></i>
            <p class='ml-2'> Modifier profile </p>
@@ -66,7 +70,15 @@ response.forEach(user => {
 });    
 }
 header()
-
+async function home(){
+    window.location.href="../user/home/home.html"
+}
+async function addPublication(){
+    window.location.href ="../user/publication/creationPublication/CreatePublication.html"
+}
+async function updateUser(){
+    window.location.href ="../updateProfile/updateProfile.html"
+}
 
 async function allUser(event){
 
@@ -291,3 +303,7 @@ async function deletePublication(id){
     window.location.reload()
     
 }
+async function logOut(){
+    localStorage.clear()
+    window.location.href="../../authentification/login/login.html"
+  }
