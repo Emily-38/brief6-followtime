@@ -122,7 +122,7 @@ async function deleteCommentaire(req, res) {
 }
 
 async function updateCommentaire(req, res){
-    const id = req.params.id;
+    const id = new ObjectId(req.params.id);
     const token = await extractToken(req) ;
 
         jwt.verify(
@@ -154,7 +154,6 @@ async function updateCommentaire(req, res){
           },
         }
       )
-      
         res.status(200).json({ msg: "Update successful" });
       
      }catch(e){

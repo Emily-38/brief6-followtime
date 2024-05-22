@@ -370,5 +370,4 @@ res.status(200).json({ msg: "ajout reussie" });
       )
     }
     
-
       module.exports={insertPublicationPicture, CreatePublication, AllPublication,AllPublicationById, deletePublication, updatePublication,addLike,dislike, GetPublicationByUserId, AllPublications}

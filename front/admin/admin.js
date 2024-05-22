@@ -77,7 +77,7 @@ async function addPublication(){
     window.location.href ="../user/publication/creationPublication/CreatePublication.html"
 }
 async function updateUser(){
-    window.location.href ="../updateProfile/updateProfile.html"
+    window.location.href ="../user/updateProfile/updateProfile.html"
 }
 
 async function allUser(event){
@@ -97,7 +97,7 @@ async function allUser(event){
     setTimeout(()=>{
     main.innerHTML=""
     main.classList.remove('translate-x-1/2')
-    responseUser.forEach(user => {
+    responseUser.result.forEach(user => {
         main.innerHTML+=`
         <div class="max-w-md m-5 mx-auto bg-white shadow-lg rounded-lg overflow-hidden relative ">
         <div class="relative">

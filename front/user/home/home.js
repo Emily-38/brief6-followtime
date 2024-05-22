@@ -17,7 +17,7 @@ async function header(){
      let response= await apiRequest.json()
   
  response.forEach(user => {
-    
+   
     header.innerHTML=`
     <!--SearchBar-->
     <div class="recherche w-full flex flex-rows justify-center shadow-md bg-gray-100 p-3"> 
@@ -88,6 +88,7 @@ async function addPublication(){
 async function publication(){
 const main= document.querySelector('main')
 const jwt = localStorage.getItem('jwt')
+main.innerHTML=""
 let request = {
    method: 'GET',
    headers: {
@@ -106,13 +107,12 @@ for(let follow of responseFollow.result){
 
   let apiUser = await fetch(`http://localhost:3555/userbyid/${follow.cible_id}`, request)
   let responseUser= await apiUser.json()
- 
+
   responsePublication.forEach(publication => {
-    
+    if(responseUser[0].isActive===1){
     main.innerHTML +=`
 
-    
-
+   
 <div class="relative mx-auto mt-16 grid grid-cols-1 max-w-2xl  grid-rows-1 gap-8 text-sm leading-6 text-gray-900 sm:mt-20 sm:grid-cols-2 xl:mx-0 xl:max-w-none xl:grid-flow-col xl:grid-cols-4">
 <figure class="rounded-2xl  bg-white shadow-lg ring-1 ring-gray-900/5 sm:col-span-2 xl:col-start-2 xl:row-start-1">
   <figcaption class="flex flex-wrap items-center gap-x-4 gap-y-4 border-t border-gray-900/10 px-6 py-4 sm:flex-nowrap">
@@ -158,27 +158,85 @@ ${responseFollow.authData === publication.user_id?`<div class="relative">
   ${publication.likes.includes(responseFollow.authData)=== true ? `<div class="flex justify-between ">
   <div class="interaction${publication._id} m-2 ">
   <button onclick="disliketoggle('${publication._id}')"  class=" m-2"><i id="like" class="fa-solid fa-heart text-red-600 "></i></button>
-        <button onclick="commenter()"><i class="fa-solid fa-comments"></i></button>
+       
   </div>`
    :`<div class="flex justify-between ">
   <div class="interaction${publication._id} m-2 ">
       <button onclick="liketoggle('${publication._id}')"  class="add m-2"><i id="like" class="fa-solid fa-heart  "></i></button>
-      <button onclick="commenter()"><i class="fa-solid fa-comments"></i></button>
+     
   </div>` }
   </div>
-  <div id="commentaire"class="commentaire hidden max-w-2xl left-1/4 bottom-0 gap-8 text-sm leading-6 text-gray-900 xl:mx-0 xl:max-w-none">
-        <div class=" flex flex-col rounded-2xl bg-slate-200 shadow-lg ring-1 ring-gray-900/5 sm:col-span-2 xl:col-start-2 xl:row-end-1 ">
-            <textarea id="description" class="m-3"></textarea>
-             <button onclick="addCommentaire('${publication._id}')" class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">Envoyer</button>
-        </div>
-    </div>
+ 
 </figure>
 </div> 
-`
+`}
 })
 }
 }
 publication()
+
+async function suggestion(){
+  const main= document.querySelector('main')
+  const jwt = localStorage.getItem('jwt')
+   main.innerHTML=""
+  let request = {
+     method: 'GET',
+     headers: {
+         'Content-Type': 'application/json; charset=utf-8',
+         Authorization: `Bearer ${jwt}`,
+     },
+  }
+  
+  let apiFollow = await fetch('http://localhost:3555/UserNBFollow', request)
+  let responseFollow= await apiFollow.json()
+  
+
+for(let user of responseFollow.result){
+
+  let apiExistFollow = await fetch(`http://localhost:3555/followByAuth/${user.userid}`, request)
+  let responseExisteFollow= await apiExistFollow.json()
+console.log( responseExisteFollow.length === 0)
+ 
+    if(user.isActive===1 &&  responseExisteFollow.length === 0 ){
+ main.innerHTML +=` 
+ <div class="max-w-md m-5 mx-auto bg-white shadow-lg rounded-lg overflow-hidden relative ">
+ <div class="relative">
+   <img id="avatar" src="http://localhost:3555/${user.banniere}" alt="User Banniere" class="h-48 w-full object-cover">
+ </div>
+ <img class="absolute top-36 m-2 h-16 w-16 rounded-full ring-1 ring-black sm:h-16 sm:w-16" src="http://localhost:3555/${user.avatar}" alt="User Avatar">
+ <div id="userDetails" class="text-center px-6 py-4">
+   <h3 id="username" class="text-xl font-semibold text-gray-800">${user.pseudo}</h3>
+   <div class="flex justify-center mt-4">
+     <div>
+       <p class="text-sm text-gray-600">Followers</p>
+       <p id="followers" class="text-lg font-semibold text-gray-800">${user.nbfollow}</p>
+       <div id="btnfollow">
+       <button onclick="follow('${user.userid}')" class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" >Suivre</button>
+       </div>
+     </div>`
+}
+ 
+  }
+}
+async function follow(id){
+  const jwt = localStorage.getItem('jwt')
+  const btnfollow=document.querySelector('#btnfollow')
+  
+  let request = {
+      method: 'POST',
+      headers: {
+          'Content-type': 'application/json; charset=utf-8',
+          Authorization: `Bearer ${jwt}`,
+      },
+    }
+  
+  const addfollow= await fetch(`http://localhost:3555/following/${id}`,request)
+  if(addfollow.status===200){
+ window.location.reload()
+  }
+  
+  
+  }
 
 async function getAll(){
   const jwt = localStorage.getItem('jwt')
@@ -186,7 +244,7 @@ async function getAll(){
   const searchInput = document.querySelector('#search-input').value;
   const users=document.querySelector('.user')
 const dropdow=document.querySelector('#dropdownDotsHorizontal')
-console.log(select )
+
 if( !searchInput){
     dropdow.classList.add("hidden")
   }
@@ -209,13 +267,15 @@ if( !searchInput){
         users.innerHTML=""
     
      responseUser.forEach(user =>{
+      
+      if(user.isActive===1){
       users.innerHTML+=`<li><button onclick="redirectionProfile('${user.id}')">
       <div class="flex flex-row items-center">
       <img src="http://localhost:3555${user.avatar}" class="w-12 object-cover h-12 rounded-full"> <p class="m-2">${user.pseudo}</p>
       </div
       </button>
       </li>
-      `
+      `}
      })
     } 
       }
@@ -239,13 +299,14 @@ dropdow.classList.remove('hidden')
     users.innerHTML=""
 
  responseUser.forEach(user =>{
+  if(user.isActive===1){
   users.innerHTML+=`<li><button onclick="redirectionProfile('${user.id}')">
   <div class="flex flex-row items-center">
   <img src="http://localhost:3555${user.avatar}" class="w-12 object-cover h-12 rounded-full"> <p class="m-2">${user.pseudo}</p>
   </div>
   </button>
   </li>
-  `
+  `}
  })
 } 
 
@@ -284,11 +345,7 @@ async function icons(id){
           menu.classList.toggle('hidden')
 }
 
-async function commenter(){
-    const commentaire= document.querySelector('.commentaire')
-    commentaire.classList.toggle('hidden')
-    window.location.href="#commentaire"
-}
+
 
 async function addCommentaire(publication_id){
     try{
@@ -346,7 +403,7 @@ const interaction=document.querySelector(`.interaction${id}`)
 if(responselike.status=== 200){
 interaction.innerHTML= `
 <button onclick="disliketoggle('${id}')"  class=" m-2"><i id="like" class="fa-solid fa-heart text-red-600 "></i></button>
-        <button onclick="commenter()"><i class="fa-solid fa-comments"></i></button>
+        
 `
 
 }
@@ -369,7 +426,7 @@ async function disliketoggle(id){
   const dislike = await fetch(`http://localhost:3555/dislike/${id}`, request)
   if(dislike.status===200){
     interaction.innerHTML=`<button onclick="liketoggle('${id}')"  class="add m-2"><i id="like" class="fa-solid fa-heart  "></i></button>
-    <button onclick="commenter()"><i class="fa-solid fa-comments"></i></button>`
+    `
   }
 
 }

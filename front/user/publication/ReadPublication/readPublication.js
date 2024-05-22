@@ -22,7 +22,7 @@ const publicationdiv=document.querySelector('.publication')
      
 
  
-users.forEach(user => {
+users.result.forEach(user => {
 console.log(user.userid)
         if(user.userid===response.user_id){
       publicationdiv.innerHTML +=`
@@ -30,7 +30,7 @@ console.log(user.userid)
             <figure class="rounded-2xl bg-white shadow-lg ring-1 ring-gray-900/5 sm:col-span-2 xl:col-start-2 xl:row-end-1">
     
     <figcaption class="flex flex-wrap items-center gap-x-4 gap-y-4 border-t border-gray-900/10 px-6 py-4 sm:flex-nowrap">
-   <button onclick="Profile('${user.id}')">
+   <button onclick="Profile('${user.userid}')">
     <img class="h-10 w-10 flex-none object-cover rounded-full bg-gray-50" src="http://localhost:3555/${user.avatar}" alt="">
     </button>
     <div class="flex-auto">
@@ -74,7 +74,7 @@ console.log(user.userid)
                 <button onclick="disliketoggle('${response._id}')"  class=" m-2">
                 <i id="like" class="fa-solid fa-heart text-red-600 "></i>
                 </button>
-                    <button onclick="commenter()"><i class="fa-solid fa-comments"></i></button>
+                   
                 </div>`
                  :`<div class="flex justify-between ">
                 <div class="interaction${response._id} m-2 ">
@@ -131,7 +131,7 @@ let RequestUsers= await fetch(`http://localhost:3555/users`, request)
 
  
          response.forEach(commentaire => {
-            users.forEach(user=>{
+            users.result.forEach(user=>{
                 if (commentaire.user_id===user.userid) {
 
          commentairediv.innerHTML+=`
@@ -139,7 +139,7 @@ let RequestUsers= await fetch(`http://localhost:3555/users`, request)
          <div class=" h-20 flex items-center mb-4 cursor-pointer hover:bg-gray-200 p-2 rounded-md">
 
           <div class="w-12 h-12 bg-gray-300 rounded-full mr-3">
-          <button onclick="Profile('${user.id}')">
+          <button onclick="Profile('${user.userid}')">
             <img src="http://localhost:3555/${user.avatar}" alt="User Avatar" class="w-12 object-cover h-12 rounded-full">
           </button>
             </div>

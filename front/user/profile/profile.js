@@ -1,6 +1,6 @@
 const jwt= localStorage.getItem('jwt')
 async function AfficherProfile(){
-const header= document.querySelector('header')
+const header=document.querySelector('header')
 
 const id= localStorage.getItem('profile')
   
@@ -23,9 +23,11 @@ const resultFollow= await fetchFollow.json()
 const FollowExist= await fetch(`http://localhost:3555/followByAuth/${id}`,request)
 const response=await FollowExist.json()
 
-resultUser.forEach(user => {
-    
-if(user.userid == id){
+resultUser.result.forEach(user => {
+ 
+ console.log(id)
+if(user.userid == id && user.isActive===1){
+  
   header.innerHTML+=`
   <div>
     <img class="h-32 w-full object-cover lg:h-48" src="http://localhost:3555/${user.banniere}" alt="">
@@ -59,11 +61,15 @@ if(user.userid == id){
     <div class="mt-6 hidden min-w-0 flex-1 sm:block md:hidden">
       <h1 class="truncate text-2xl font-bold text-black">${user.pseudo}</h1>
     </div>
-
-
       `
   }
+ 
+  
 })
+if(resultFollow[0].Profile == resultUser.authData){
+    const btnfollow=document.querySelector('#btnfollow')
+    btnfollow.innerHTML=""
+  }
 }
 AfficherProfile()
 

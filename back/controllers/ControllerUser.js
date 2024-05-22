@@ -117,7 +117,7 @@ if(!email||!pseudo||!image||!hashedPassword||!confidentialité){
     }
    
     const email=req.email
-    const sql =`SELECT * FROM users WHERE email=?`
+    const sql =`SELECT * FROM users WHERE email=? AND isActive = 1`
     const values = [email]
     const [rows] = await pool.execute(sql, values)
 
@@ -206,7 +206,7 @@ const allUsers= async (req, res) =>{
   
       const sql = "SELECT * ,users.id as userid, CONCAT('/uploads/', image) as avatar, CONCAT('/uploads/', banniere) as banniere, COUNT(users.id) as follower FROM users JOIN followers ON users.id=followers.cible_id GROUP BY followers.cible_id";
       const [result] = await pool.execute(sql);
-        res.json(result);
+        res.json({result:result, authData:authData.id});
     } catch (err) {
       console.log(err.stack);
     }
@@ -241,6 +241,9 @@ const allUsers= async (req, res) =>{
         })
     }
 
+
+
+    // tout les function en rapport avec les follows
   const addfollowing= async (req, res)=>{
     const userFollow=req.params.id
     const token = await extractToken(req) ;
@@ -300,8 +303,35 @@ const unfollowing= async (req, res)=>{
 }
 })
 }
+const AllUserNBFollow= async (req, res)=>{
+  const token = await extractToken(req) ;
+      
+  jwt.verify(
+    token,
+  process.env.SECRET_KEY,
+  async (err, authData) => {
+      if (err) {
 
-const allUserPlusNomberFollower= async (req, res)=>{
+        console.log(err)
+        res.status(401).json({ err: 'Unauthorized' })
+        return
+    } else {
+
+try{
+
+const sql = "SELECT * , COUNT(cible_id) AS nbfollow, users.id AS userid, CONCAT('/uploads/', image) as avatar, CONCAT('/uploads/', banniere) as banniere FROM followers JOIN users ON followers.cible_id= users.id GROUP BY users.id ORDER BY nbfollow DESC;";
+const [result] = await pool.execute(sql);
+  res.json({result:result,authData:authData.id});
+} catch (err) {
+console.log(err.stack);
+}
+}
+  })
+
+
+}
+
+const UserByIdPlusNomberFollower= async (req, res)=>{
   const token = await extractToken(req) ;
       
   jwt.verify(
@@ -764,6 +794,43 @@ const updateEmail = async (req,res)=>{
       })
 
 }
-  module.exports={ctrlCreateUser, insertAvatarPicture, login, Confidentialiter,userbyAuthData,allUsers,addfollowing, allUserPlusNomberFollower, unfollowing,allFollow,allFollowByAuthData, followersAsFollow,userbyIdUser,ctrlSearchByPseudo,ctrlSearchByemail, updateCompteDesactive,updateCompteActive,updatePassword,mailerpassword, updateprofilephoto,updateprofilBanner,updatePseudo,updateConfidentialiter,updateEmail,mailerEmail }
+const forgetPassword = async (req,res)=>{
+
+
+const email = req.body.email
+const tokenTemporaire = jwt.sign(
+  {
+
+      email: email,
+  },
+
+      process.env.SECRET_KEY,
+      { expiresIn: '1h'}
+)
+const data=[tokenTemporaire, email]
+const sql =`UPDATE users SET token = ? WHERE email = ?;  `
+
+const [rows]=await pool.execute(sql,data)
+
+if(rows.affectedRows===1){
+const link=`http://127.0.0.1:5500/user/profile/change-password/change-password.html?token=${tokenTemporaire}`
+
+
+  const info = await transporter.sendMail({
+    from: `followtime@support.fr`, 
+    to: 'nayuko1208@gmail.com', //useremail ${authdata.email}
+    subject: `changer votre mot de passe`, 
+    text: `suivre le mail suivant`,
+    html: `<b>Bonjour </b>
+    <p>voici le lien qui vous permettra de changer votre mot de passe : </p>
+    <a href="${link}">cliquer ici</a>`, 
+  })
+
+ 
+  res.status(200).json({msg:`Message send with the id ${info.messageId}`})
+}
+}
+
+  module.exports={ctrlCreateUser, insertAvatarPicture, login, Confidentialiter,userbyAuthData,allUsers,addfollowing, UserByIdPlusNomberFollower, unfollowing,allFollow,allFollowByAuthData, followersAsFollow,userbyIdUser,ctrlSearchByPseudo,ctrlSearchByemail, updateCompteDesactive,updateCompteActive,updatePassword,mailerpassword, updateprofilephoto,updateprofilBanner,updatePseudo,updateConfidentialiter,updateEmail,mailerEmail,AllUserNBFollow,forgetPassword }
 
 
