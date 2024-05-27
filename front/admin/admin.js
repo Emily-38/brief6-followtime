@@ -27,7 +27,7 @@ response.forEach(user => {
    </select>
      <div id="dropdownDotsHorizontal" class="z-10 hidden absolute right-4/12 top-12 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
    <ul class="user py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconHorizontalButton">
-     lit
+     
    </ul>
    </div>
        </div>
@@ -204,7 +204,7 @@ async function getAll(){
   } 
   
     }
-  }
+}
 
 async function DesactiverCompte(id){
     const comptebtn= document.querySelector(`.comptebtn${id}`)
@@ -266,7 +266,8 @@ async function allPublication(){
     setTimeout(()=>{
     main.classList.remove('translate-x-1/2');
     responsePublications.forEach(publication => {
-        main.innerHTML+=`<div class="w-auto m-5 mx-auto bg-white shadow-lg rounded-lg overflow-hidden relative">
+        main.innerHTML+=`
+        <div class="w-auto m-5 mx-auto bg-white shadow-lg rounded-lg overflow-hidden relative">
         <div class="relative">
           <img id="avatar" src="http://localhost:3555/uploads/${publication.image}" alt="User Banniere" class="m-2 object-coverh-48 w-48 object-cover">
         </div>
@@ -306,4 +307,4 @@ async function deletePublication(id){
 async function logOut(){
     localStorage.clear()
     window.location.href="../../authentification/login/login.html"
-  }
+}
