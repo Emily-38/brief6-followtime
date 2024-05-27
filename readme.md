@@ -4,7 +4,7 @@ followtime est un site web basé sur les reseaux sociaux une partie user est dis
 ou trouver les document: 
 les documents qui se trouve dans un fichier ignore : 
 - image de l'organisation de la bdd 
-- bdd en format sql pour l'oragnisation de travail vous pouvez le trouver dans projet sur le github clique[cliquez ici](https://github.com/users/Emily-38/projects/4).
+- bdd en format sql pour l'oragnisation de travail vous pouvez le trouver dans projet sur le github [cliquez ici](https://github.com/users/Emily-38/projects/4).
 
 comment l'installer :
 
