@@ -92,7 +92,7 @@ if(!email||!pseudo||!image||!hashedPassword||!confidentialité){
     res.json({message: "les champs ne sont pas remplis"})
 }else{
     let data =[email,pseudo,image,hashedPassword,confidentialité];
-        const sql = `INSERT INTO users (email,pseudo,image,password,confidentialité_id,)
+        const sql = `INSERT INTO users (email,pseudo,image,password,confidentialité_id)
                     VALUES (?,?,?,?,?)`;      
      const[rows]=await pool.execute(sql, data);
 
